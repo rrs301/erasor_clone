@@ -38,7 +38,6 @@ const rawDocument={
 function Editor({onSaveTrigger,fileId,fileData}:{onSaveTrigger:any,fileId:any,fileData:FILE}) {
     const ref=useRef<EditorJS>();
     const updateDocument=useMutation(api.files.updateDocument);
-    const [document,setDocument]=useState(rawDocument);
     useEffect(()=>{
         fileData&&initEditor();
     },[fileData])

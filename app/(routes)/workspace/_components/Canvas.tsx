@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Excalidraw, MainMenu, WelcomeScreen } from "@excalidraw/excalidraw";
-import { FILE } from '../../dashboard/_components/FileList';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-function Canvas({onSaveTrigger,fileId,fileData}:{onSaveTrigger:any,fileId:any,fileData:FILE}) {
+import { Doc } from '@/convex/_generated/dataModel';
+function Canvas({onSaveTrigger,fileId,fileData}:{onSaveTrigger:any,fileId:any,fileData:Doc<"files">}) {
   
     const [whiteBoardData,setWhiteBoardData]=useState<any>();
     
