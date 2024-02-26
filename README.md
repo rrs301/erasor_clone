@@ -3,8 +3,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Tech Stack
 - Next.Js
 - React
-- Convex
-- Kinde
+- [Convex](https://convex.dev/c/tubeguruji)
+- [Kinde] (https://kinde.com/)
 - Tailwind Css
 - Typescript
 - Deploy on vercel
