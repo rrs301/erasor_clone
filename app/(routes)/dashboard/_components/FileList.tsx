@@ -53,7 +53,7 @@ function FileList() {
 
     <tbody className="divide-y divide-gray-200">
       {fileList&&fileList.map((file:FILE,index:number)=>(
-        <tr className="odd:bg-gray-50 cursor-pointer"
+        <tr key={index} className="odd:bg-gray-50 cursor-pointer"
         onClick={()=>router.push('/workspace/'+file._id)}
         >
         <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
@@ -64,12 +64,12 @@ function FileList() {
         {moment(file._creationTime).format('DD MMM YYYY')}
         </td>
         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-          <Image src= {user?.picture}
+         {user&& <Image src= {user?.picture}
           alt='user'
           width={30}
           height={30}
           className='rounded-full'
-          />
+          />}
         </td>
         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
          

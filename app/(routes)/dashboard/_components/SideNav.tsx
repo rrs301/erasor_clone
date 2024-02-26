@@ -14,7 +14,7 @@ import { FileListContext } from '@/app/_context/FilesListContext'
 function SideNav() {
   const {user}:any=useKindeBrowserClient();
   const createFile=useMutation(api.files.createFile);
-  const [activeTeam,setActiveTeam]=useState<TEAM>();
+  const [activeTeam,setActiveTeam]=useState<TEAM|any>();
   const convex=useConvex();
   const [totalFiles,setTotalFiles]=useState<Number>();
   const {fileList_,setFileList_}=useContext(FileListContext);
