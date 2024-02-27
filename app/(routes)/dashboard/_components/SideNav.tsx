@@ -1,74 +1,76 @@
-import { Archive, ChevronDown, Flag, Github } from 'lucide-react'
-import Image from 'next/image'
-import React, { useContext, useEffect, useState } from 'react'
-import SideNavTopSection, { TEAM } from './SideNavTopSection'
-import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
-import SideNavBottomSection from './SideNavBottomSection'
-import { useConvex, useMutation } from 'convex/react'
-import { api } from '@/convex/_generated/api'
-import { toast } from 'sonner'
-import { FileListContext } from '@/app/_context/FilesListContext'
-
-
+import React, { useEffect, useState } from "react";
+import SideNavTopSection, { TEAM } from "./SideNavTopSection";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import SideNavBottomSection from "./SideNavBottomSection";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 function SideNav() {
-  const {user}:any=useKindeBrowserClient();
-  const createFile=useMutation(api.files.createFile);
-  const [activeTeam,setActiveTeam]=useState<TEAM|any>();
-  const convex=useConvex();
-  const [totalFiles,setTotalFiles]=useState<Number>();
-  const {fileList_,setFileList_}=useContext(FileListContext);
-  useEffect(()=>{
-    activeTeam&&getFiles();
-  },[activeTeam])
-  const onFileCreate=(fileName:string)=>{
-    console.log(fileName)
+  const { user }: any = useKindeBrowserClient();
+  const createFile = useMutation(api.files.createFile);
+  const teams = useQuery(api.teams.getTeams, { email: user?.email });
+  const [activeTeam, setActiveTeam] = useState<TEAM | undefined>(teams?.[0]);
+  const files = useQuery(
+    api.files.getFiles,
+    activeTeam ? { teamId: activeTeam?._id } : "skip"
+  );
+  const [totalFiles, setTotalFiles] = useState<Number>();
+  useEffect(() => {
+    files && setTotalFiles(files.length);
+  }, [files]);
+  const onFileCreate = (fileName: string) => {
+    console.log(fileName);
+    if (!user) {
+      toast("Please login first");
+    }
+    if (!activeTeam) {
+      toast("Please select a team first");
+      return;
+    }
     createFile({
-      fileName:fileName,
-      teamId:activeTeam?._id,
-      createdBy:user?.email,
-      archive:false,
-      document:'',
-      whiteboard:''
-    }).then(resp=>{
-      if(resp)
-      {
-        getFiles();
-        toast('File created successfully!')
+      fileName: fileName,
+      teamId: activeTeam._id,
+      createdBy: user.email,
+      archive: false,
+      document: "",
+      whiteboard: "",
+    }).then(
+      (resp) => {
+        if (resp) {
+          toast("File created successfully!");
+        }
+      },
+      (e) => {
+        toast("Error while creating file");
+        console.error(e);
       }
-    },(e)=>{
-      toast('Error while creating file')
-
-    })
-  }
-
-  const getFiles=async()=>{
-    const result=await convex.query(api.files.getFiles,{teamId:activeTeam?._id});
-    console.log(result);
-    setFileList_(result);
-    setTotalFiles(result?.length)
-  }
+    );
+  };
 
   return (
     <div
-    className=' h-screen 
+      className=" h-screen
     fixed w-72 borde-r border-[1px] p-6
     flex flex-col
-    '
+    "
     >
-      <div className='flex-1'>
-      <SideNavTopSection user={user} 
-      setActiveTeamInfo={(activeTeam:TEAM)=>setActiveTeam(activeTeam)}/>
+      <div className="flex-1">
+        <SideNavTopSection
+          user={user}
+          activeTeam={activeTeam}
+          setActiveTeam={setActiveTeam}
+        />
       </div>
-    
-     <div>
-      <SideNavBottomSection
-      totalFiles={totalFiles}
-      onFileCreate={onFileCreate}
-      />
-     </div>
+
+      <div>
+        <SideNavBottomSection
+          totalFiles={totalFiles}
+          onFileCreate={onFileCreate}
+        />
+      </div>
     </div>
-  )
+  );
 }
 
-export default SideNav
+export default SideNav;
